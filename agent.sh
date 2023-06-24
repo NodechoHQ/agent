@@ -23,37 +23,37 @@ version="0.7.7"
 # Authentication required
 if [ -f /etc/nodecho/auth.log ]
 then
-	auth=($(cat /etc/nodecho/auth.log))
+    auth=($(cat /etc/nodecho/auth.log))
 else
-	echo "Error: Authentication log is missing."
-	exit 1
+    echo "Error: Authentication log is missing."
+    exit 1
 fi
 
 # Prepare values
 function prep ()
 {
-	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
+    echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
 }
 
 # Base64 values
 function base ()
 {
-	echo "$1" | tr -d '\n' | base64 | tr -d '=' | tr -d '\n' | sed 's/\//%2F/g' | sed 's/\+/%2B/g'
+    echo "$1" | tr -d '\n' | base64 | tr -d '=' | tr -d '\n' | sed 's/\//%2F/g' | sed 's/\+/%2B/g'
 }
 
 # Integer values
 function int ()
 {
-	echo ${1/\.*}
+    echo ${1/\.*}
 }
 
 # Filter numeric
 function num ()
 {
-	case $1 in
-	    ''|*[!0-9\.]*) echo 0 ;;
-	    *) echo $1 ;;
-	esac
+    case $1 in
+        ''|*[!0-9\.]*) echo 0 ;;
+        *) echo $1 ;;
+    esac
 }
 
 # Agent version
@@ -81,35 +81,35 @@ os_kernel=$(prep "$(uname -r)")
 
 if ls /etc/*release > /dev/null 2>&1
 then
-	os_name=$(prep "$(cat /etc/*release | grep '^PRETTY_NAME=\|^NAME=\|^DISTRIB_ID=' | awk -F\= '{ print $2 }' | tr -d '"' | tac)")
+    os_name=$(prep "$(cat /etc/*release | grep '^PRETTY_NAME=\|^NAME=\|^DISTRIB_ID=' | awk -F\= '{ print $2 }' | tr -d '"' | tac)")
 fi
 
 if [ -z "$os_name" ]
 then
-	if [ -e /etc/redhat-release ]
-	then
-		os_name=$(prep "$(cat /etc/redhat-release)")
-	elif [ -e /etc/debian_version ]
-	then
-		os_name=$(prep "Debian $(cat /etc/debian_version)")
-	fi
-	
-	if [ -z "$os_name" ]
-	then
-		os_name=$(prep "$(uname -s)")
-	fi
+    if [ -e /etc/redhat-release ]
+    then
+        os_name=$(prep "$(cat /etc/redhat-release)")
+    elif [ -e /etc/debian_version ]
+    then
+        os_name=$(prep "Debian $(cat /etc/debian_version)")
+    fi
+
+    if [ -z "$os_name" ]
+    then
+        os_name=$(prep "$(uname -s)")
+    fi
 fi
 
 case $(uname -m) in
 x86_64)
-	os_arch=$(prep "x64")
-	;;
+    os_arch=$(prep "x64")
+    ;;
 i*86)
-	os_arch=$(prep "x86")
-	;;
+    os_arch=$(prep "x86")
+    ;;
 *)
-	os_arch=$(prep "$(uname -m)")
-	;;
+    os_arch=$(prep "$(uname -m)")
+    ;;
 esac
 
 # CPU details
@@ -118,15 +118,15 @@ cpu_cores=$(prep "$(($(cat /proc/cpuinfo | grep 'model name' | awk -F\: '{ print
 
 if [ -z "$cpu_name" ]
 then
-	cpu_name=$(prep "$(cat /proc/cpuinfo | grep 'vendor_id' | awk -F\: '{ print $2 } END { if (!NR) print "N/A" }')")
-	cpu_cores=$(prep "$(($(cat /proc/cpuinfo | grep 'vendor_id' | awk -F\: '{ print $2 }' | sed -e :a -e '$!N;s/\n/\|/;ta' | tr -cd \| | wc -c)+1))")
+    cpu_name=$(prep "$(cat /proc/cpuinfo | grep 'vendor_id' | awk -F\: '{ print $2 } END { if (!NR) print "N/A" }')")
+    cpu_cores=$(prep "$(($(cat /proc/cpuinfo | grep 'vendor_id' | awk -F\: '{ print $2 }' | sed -e :a -e '$!N;s/\n/\|/;ta' | tr -cd \| | wc -c)+1))")
 fi
 
 cpu_freq=$(prep "$(cat /proc/cpuinfo | grep 'cpu MHz' | awk -F\: '{ print $2 }')")
 
 if [ -z "$cpu_freq" ]
 then
-	cpu_freq=$(prep $(num "$(lscpu | grep 'CPU MHz' | awk -F\: '{ print $2 }' | sed -e 's/^ *//g' -e 's/ *$//g')"))
+    cpu_freq=$(prep $(num "$(lscpu | grep 'CPU MHz' | awk -F\: '{ print $2 }' | sed -e 's/^ *//g' -e 's/ *$//g')"))
 fi
 
 # RAM usage
@@ -153,9 +153,9 @@ disk_array=$(prep "$(df -P -B 1 | grep '^/' | awk '{ print $1" "$2" "$3";" }' | 
 # Active connections
 if [ -n "$(command -v ss)" ]
 then
-	connections=$(prep $(num "$(ss -tun | tail -n +2 | wc -l)"))
+    connections=$(prep $(num "$(ss -tun | tail -n +2 | wc -l)"))
 else
-	connections=$(prep $(num "$(netstat -tun | tail -n +3 | wc -l)"))
+    connections=$(prep $(num "$(netstat -tun | tail -n +3 | wc -l)"))
 fi
 
 # Network interface
@@ -163,7 +163,7 @@ nic=$(prep "$(ip route get 8.8.8.8 | grep dev | awk -F'dev' '{ print $2 }' | awk
 
 if [ -z $nic ]
 then
-	nic=$(prep "$(ip link show | grep 'eth[0-9]' | awk '{ print $2 }' | tr -d ':')")
+    nic=$(prep "$(ip link show | grep 'eth[0-9]' | awk '{ print $2 }' | tr -d ':')")
 fi
 
 # IP addresses and network usage
@@ -172,11 +172,11 @@ ipv6=$(prep "$(ip addr show $nic | grep 'inet6 ' | awk '{ print $2 }' | awk -F\/
 
 if [ -d /sys/class/net/$nic/statistics ]
 then
-	rx=$(prep $(num "$(cat /sys/class/net/$nic/statistics/rx_bytes)"))
-	tx=$(prep $(num "$(cat /sys/class/net/$nic/statistics/tx_bytes)"))
+    rx=$(prep $(num "$(cat /sys/class/net/$nic/statistics/rx_bytes)"))
+    tx=$(prep $(num "$(cat /sys/class/net/$nic/statistics/tx_bytes)"))
 else
-	rx=$(prep $(num "$(ip -s link show $nic | grep '[0-9]*' | grep -v '[A-Za-z]' | awk '{ print $1 }' | sed -n '1 p')"))
-	tx=$(prep $(num "$(ip -s link show $nic | grep '[0-9]*' | grep -v '[A-Za-z]' | awk '{ print $1 }' | sed -n '2 p')"))
+    rx=$(prep $(num "$(ip -s link show $nic | grep '[0-9]*' | grep -v '[A-Za-z]' | awk '{ print $1 }' | sed -n '1 p')"))
+    tx=$(prep $(num "$(ip -s link show $nic | grep '[0-9]*' | grep -v '[A-Za-z]' | awk '{ print $1 }' | sed -n '2 p')"))
 fi
 
 # Average system load
@@ -191,31 +191,31 @@ idle=${stat[3]}
 
 if [ -e /etc/nodecho/data.log ]
 then
-	data=($(cat /etc/nodecho/data.log))
-	interval=$(($time-${data[0]}))
-	cpu_gap=$(($cpu-${data[1]}))
-	io_gap=$(($io-${data[2]}))
-	idle_gap=$(($idle-${data[3]}))
-	
-	if [[ $cpu_gap > "0" ]]
-	then
-		load_cpu=$(((1000*($cpu_gap-$idle_gap)/$cpu_gap+5)/10))
-	fi
-	
-	if [[ $io_gap > "0" ]]
-	then
-		load_io=$(((1000*($io_gap-$idle_gap)/$io_gap+5)/10))
-	fi
-	
-	if [[ $rx > ${data[4]} ]]
-	then
-		rx_gap=$(($rx-${data[4]}))
-	fi
-	
-	if [[ $tx > ${data[5]} ]]
-	then
-		tx_gap=$(($tx-${data[5]}))
-	fi
+    data=($(cat /etc/nodecho/data.log))
+    interval=$(($time-${data[0]}))
+    cpu_gap=$(($cpu-${data[1]}))
+    io_gap=$(($io-${data[2]}))
+    idle_gap=$(($idle-${data[3]}))
+
+    if [[ $cpu_gap > "0" ]]
+    then
+        load_cpu=$(((1000*($cpu_gap-$idle_gap)/$cpu_gap+5)/10))
+    fi
+
+    if [[ $io_gap > "0" ]]
+    then
+        load_io=$(((1000*($io_gap-$idle_gap)/$io_gap+5)/10))
+    fi
+
+    if [[ $rx > ${data[4]} ]]
+    then
+        rx_gap=$(($rx-${data[4]}))
+    fi
+
+    if [[ $tx > ${data[5]} ]]
+    then
+        tx_gap=$(($tx-${data[5]}))
+    fi
 fi
 
 # System load cache
@@ -238,20 +238,20 @@ data_post="token=${auth[0]}&data=$(base "$version") $(base "$uptime") $(base "$s
 # API request with automatic termination
 if [ -n "$(command -v timeout)" ]
 then
-	timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://api.nodecho.com/agent.json"
+    timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://api.nodecho.com/agent.json"
 else
-	wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://api.nodecho.com/agent.json"
-	wget_pid=$! 
-	wget_counter=0
-	wget_timeout=30
-	
-	while kill -0 "$wget_pid" && (( wget_counter < wget_timeout ))
-	do
-	    sleep 1
-	    (( wget_counter++ ))
-	done
-	
-	kill -0 "$wget_pid" && kill -s SIGKILL "$wget_pid"
+    wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://api.nodecho.com/agent.json"
+    wget_pid=$!
+    wget_counter=0
+    wget_timeout=30
+
+    while kill -0 "$wget_pid" && (( wget_counter < wget_timeout ))
+    do
+        sleep 1
+        (( wget_counter++ ))
+    done
+
+    kill -0 "$wget_pid" && kill -s SIGKILL "$wget_pid"
 fi
 
 # Finished
