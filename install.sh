@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# NodeQuery Agent Installation Script
+# Nodecho Agent Installation Script
 #
 # @version		1.0.6
 # @date			2014-07-30
@@ -18,12 +18,12 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Prepare output
-echo -e "|\n|   NodeQuery Installer\n|   ===================\n|"
+echo -e "|\n|   Nodecho Installer\n|   ===================\n|"
 
 # Root required
 if [ $(id -u) != "0" ];
 then
-	echo -e "|   Error: You need to be root to install the NodeQuery agent\n|"
+	echo -e "|   Error: You need to be root to install the Nodecho agent\n|"
 	echo -e "|          The agent itself will NOT be running as root but instead under its own non-privileged user\n|"
 	exit 1
 fi
@@ -112,45 +112,45 @@ then
 fi
 
 # Attempt to delete previous agent
-if [ -f /etc/nodequery/nq-agent.sh ]
+if [ -f /etc/nodecho/agent.sh ]
 then
 	# Remove agent dir
-	rm -Rf /etc/nodequery
+	rm -Rf /etc/nodecho
 
 	# Remove cron entry and user
-	if id -u nodequery >/dev/null 2>&1
+	if id -u nodecho >/dev/null 2>&1
 	then
-		(crontab -u nodequery -l | grep -v "/etc/nodequery/nq-agent.sh") | crontab -u nodequery - && userdel nodequery
+		(crontab -u nodecho -l | grep -v "/etc/nodecho/agent.sh") | crontab -u nodecho - && userdel nodecho
 	else
-		(crontab -u root -l | grep -v "/etc/nodequery/nq-agent.sh") | crontab -u root -
+		(crontab -u root -l | grep -v "/etc/nodecho/agent.sh") | crontab -u root -
 	fi
 fi
 
 # Create agent dir
-mkdir -p /etc/nodequery
+mkdir -p /etc/nodecho
 
 # Download agent
-echo -e "|   Downloading nq-agent.sh to /etc/nodequery\n|\n|   + $(wget -nv -o /dev/stdout -O /etc/nodequery/nq-agent.sh --no-check-certificate https://raw.github.com/nodequery/nq-agent/master/nq-agent.sh)"
+echo -e "|   Downloading agent.sh to /etc/nodecho\n|\n|   + $(wget -nv -o /dev/stdout -O /etc/nodecho/agent.sh --no-check-certificate https://raw.github.com/nodecho/agent/master/agent.sh)"
 
-if [ -f /etc/nodequery/nq-agent.sh ]
+if [ -f /etc/nodecho/agent.sh ]
 then
 	# Create auth file
-	echo "$1" > /etc/nodequery/nq-auth.log
+	echo "$1" > /etc/nodecho/nq-auth.log
 	
 	# Create user
-	useradd nodequery -r -d /etc/nodequery -s /bin/false
+	useradd nodecho -r -d /etc/nodecho -s /bin/false
 	
 	# Modify user permissions
-	chown -R nodequery:nodequery /etc/nodequery && chmod -R 700 /etc/nodequery
+	chown -R nodecho:nodecho /etc/nodecho && chmod -R 700 /etc/nodecho
 	
 	# Modify ping permissions
 	chmod +s `type -p ping`
 
 	# Configure cron
-	crontab -u nodequery -l 2>/dev/null | { cat; echo "*/3 * * * * bash /etc/nodequery/nq-agent.sh > /etc/nodequery/nq-cron.log 2>&1"; } | crontab -u nodequery -
+	crontab -u nodecho -l 2>/dev/null | { cat; echo "*/3 * * * * bash /etc/nodecho/agent.sh > /etc/nodecho/nq-cron.log 2>&1"; } | crontab -u nodecho -
 	
 	# Show success
-	echo -e "|\n|   Success: The NodeQuery agent has been installed\n|"
+	echo -e "|\n|   Success: The Nodecho agent has been installed\n|"
 	
 	# Attempt to delete installation script
 	if [ -f $0 ]
@@ -159,5 +159,5 @@ then
 	fi
 else
 	# Show error
-	echo -e "|\n|   Error: The NodeQuery agent could not be installed\n|"
+	echo -e "|\n|   Error: The Nodecho agent could not be installed\n|"
 fi
