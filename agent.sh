@@ -21,9 +21,9 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 version="0.7.7"
 
 # Authentication required
-if [ -f /etc/nodecho/nq-auth.log ]
+if [ -f /etc/nodecho/auth.log ]
 then
-	auth=($(cat /etc/nodecho/nq-auth.log))
+	auth=($(cat /etc/nodecho/auth.log))
 else
 	echo "Error: Authentication log is missing."
 	exit 1
@@ -189,9 +189,9 @@ cpu=$((${stat[0]}+${stat[1]}+${stat[2]}+${stat[3]}))
 io=$((${stat[3]}+${stat[4]}))
 idle=${stat[3]}
 
-if [ -e /etc/nodecho/nq-data.log ]
+if [ -e /etc/nodecho/data.log ]
 then
-	data=($(cat /etc/nodecho/nq-data.log))
+	data=($(cat /etc/nodecho/data.log))
 	interval=$(($time-${data[0]}))
 	cpu_gap=$(($cpu-${data[1]}))
 	io_gap=$(($io-${data[2]}))
@@ -219,7 +219,7 @@ then
 fi
 
 # System load cache
-echo "$time $cpu $io $idle $rx $tx" > /etc/nodecho/nq-data.log
+echo "$time $cpu $io $idle $rx $tx" > /etc/nodecho/data.log
 
 # Prepare load variables
 rx_gap=$(prep $(num "$rx_gap"))
@@ -238,9 +238,9 @@ data_post="token=${auth[0]}&data=$(base "$version") $(base "$uptime") $(base "$s
 # API request with automatic termination
 if [ -n "$(command -v timeout)" ]
 then
-	timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/nodecho/nq-agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://nodecho.com/api/agent.json"
+	timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://nodecho.com/api/agent.json"
 else
-	wget -q -o /dev/null -O /etc/nodecho/nq-agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://nodecho.com/api/agent.json"
+	wget -q -o /dev/null -O /etc/nodecho/agent.log -T 25 --post-data "$data_post" --no-check-certificate "https://nodecho.com/api/agent.json"
 	wget_pid=$! 
 	wget_counter=0
 	wget_timeout=30

@@ -135,7 +135,7 @@ echo -e "|   Downloading agent.sh to /etc/nodecho\n|\n|   + $(wget -nv -o /dev/s
 if [ -f /etc/nodecho/agent.sh ]
 then
 	# Create auth file
-	echo "$1" > /etc/nodecho/nq-auth.log
+	echo "$1" > /etc/nodecho/auth.log
 	
 	# Create user
 	useradd nodecho -r -d /etc/nodecho -s /bin/false
@@ -147,7 +147,7 @@ then
 	chmod +s `type -p ping`
 
 	# Configure cron
-	crontab -u nodecho -l 2>/dev/null | { cat; echo "*/3 * * * * bash /etc/nodecho/agent.sh > /etc/nodecho/nq-cron.log 2>&1"; } | crontab -u nodecho -
+	crontab -u nodecho -l 2>/dev/null | { cat; echo "*/3 * * * * bash /etc/nodecho/agent.sh > /etc/nodecho/cron.log 2>&1"; } | crontab -u nodecho -
 	
 	# Show success
 	echo -e "|\n|   Success: The Nodecho agent has been installed\n|"
