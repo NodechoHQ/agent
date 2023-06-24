@@ -130,7 +130,7 @@ fi
 mkdir -p /etc/nodecho
 
 # Download agent
-echo -e "|   Downloading agent.sh to /etc/nodecho\n|\n|   + $(wget -nv -o /dev/stdout -O /etc/nodecho/agent.sh --no-check-certificate https://raw.github.com/nodecho/agent/master/agent.sh)"
+echo -e "|   Downloading agent.sh to /etc/nodecho\n|\n|   + $(wget -nv -o /dev/stdout -O /etc/nodecho/agent.sh --no-check-certificate https://raw.github.com/NodechoHQ/agent/main/agent.sh)"
 
 if [ -f /etc/nodecho/agent.sh ]
 then
