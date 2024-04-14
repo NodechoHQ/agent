@@ -2,7 +2,7 @@
 #
 # Nodecho Agent
 #
-# @version		0.7.7
+# @version		0.1.0
 # @date			2024-04-14
 # @copyright	(c) 2024 http://nodecho.com
 #

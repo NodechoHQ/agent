@@ -2,7 +2,7 @@
 #
 # Nodecho Agent Installation Script
 #
-# @version		1.0.6
+# @version		0.1.0
 # @date			2024-04-14
 # @copyright	(c) 2024 https://nodecho.com
 #
