@@ -29,7 +29,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Agent version
-version="0.7.7"
+version="0.1.0"
 
 # Authentication required
 if [ -f /etc/nodecho/auth.log ]; then
