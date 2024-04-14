@@ -1,7 +1,7 @@
-NodeQuery Agent
+Nodecho Agent
 ===============
 
-The NodeQuery agent collects selected linux server data and sends them to
+The Nodecho agent collects selected linux server data and sends them to
 our monitoring system for further processing. All data being collected
 are listed below.
 
@@ -74,6 +74,16 @@ Monitored Data
 
 Legal
 -----
+
+Copyrights (c) 2024 https://nodecho.com (Nodecho)
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 Copyrights (c) 2014 https://nodequery.com (NodeQuery)
 
